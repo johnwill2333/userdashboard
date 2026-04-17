@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户运营数据看板</title>
+    <!-- 引入 Tailwind CSS 用于快速布局 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 ECharts 用于绘制图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { background-color: #f3f4f6; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .chart-container { height: 350px; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="flex">
+        <!-- 侧边导航 -->
+        <div class="w-64 h-screen bg-slate-800 text-white p-6 sticky top-0">
+            <h1 class="text-2xl font-bold mb-10 text-blue-400">运营方舟</h1>
+            <nav class="space-y-4">
+                <a href="#" class="block p-3 bg-blue-600 rounded text-white">数据概览</a>
+                <a href="#" class="block p-3 hover:bg-slate-700 rounded text-slate-300">用户分层</a>
+                <a href="#" class="block p-3 hover:bg-slate-700 rounded text-slate-300">活动分析</a>
+                <a href="#" class="block p-3 hover:bg-slate-700 rounded text-slate-300">留存报告</a>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">用户运营概览</h2>
+                <span class="text-sm text-gray-500">更新时间：2023-10-27 10:00:00</span>
+            </div>
+
+            <!-- 核心指标卡片 (KPI) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-500 mb-1">今日活跃用户 (DAU)</p>
+                    <h3 class="text-3xl font-bold text-gray-800">12,482</h3>
+                    <p class="text-xs mt-2 text-green-500">↑ 12% 较昨日</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-500 mb-1">本月新增用户</p>
+                    <h3 class="text-3xl font-bold text-gray-800">3,205</h3>
+                    <p class="text-xs mt-2 text-red-500">↓ 2.4% 较上月同期</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-500 mb-1">平均次日留存</p>
+                    <h3 class="text-3xl font-bold text-gray-800">42.8%</h3>
+                    <p class="text-xs mt-2 text-green-500">↑ 5.1% 较平均值</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-sm text-gray-500 mb-1">今日付费转化率</p>
+                    <h3 class="text-3xl font-bold text-gray-800">3.25%</h3>
+                    <p class="text-xs mt-2 text-gray-400">持平 较昨日</p>
+                </div>
+            </div>
+
+            <!-- 图表模块 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 用户增长趋势图 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h4 class="text-lg font-semibold mb-4 text-gray-700">近7日用户增长趋势</h4>
+                    <div id="growthChart" class="chart-container"></div>
+                </div>
+                <!-- 用户构成饼图 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <h4 class="text-lg font-semibold mb-4 text-gray-700">用户层级分布 (RFM)</h4>
+                    <div id="userTierChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化近7日增长趋势图
+        const growthChart = echarts.init(document.getElementById('growthChart'));
+        growthChart.setOption({
+            tooltip: { trigger: 'axis' },
+            grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+            xAxis: { type: 'category', data: ['10-21', '10-22', '10-23', '10-24', '10-25', '10-26', '10-27'], boundaryGap: false },
+            yAxis: { type: 'value' },
+            series: [{
+                name: '新增用户',
+                type: 'line',
+                smooth: true,
+                data: [450, 520, 480, 610, 590, 720, 680],
+                areaStyle: { opacity: 0.2 },
+                itemStyle: { color: '#3b82f6' }
+            }]
+        });
+
+        // 初始化用户层级分布图
+        const userTierChart = echarts.init(document.getElementById('userTierChart'));
+        userTierChart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { bottom: '0', left: 'center' },
+            series: [{
+                name: '用户等级',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+                label: { show: false },
+                data: [
+                    { value: 1048, name: '核心忠诚用户' },
+                    { value: 735, name: '潜力成长用户' },
+                    { value: 580, name: '新注册用户' },
+                    { value: 484, name: '沉睡流失用户' }
+                ]
+            }]
+        });
+
+        // 响应式调整图表
+        window.addEventListener('resize', function() {
+            growthChart.resize();
+            userTierChart.resize();
+        });
+    </script>
+</body>
+</html>
